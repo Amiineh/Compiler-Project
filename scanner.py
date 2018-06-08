@@ -112,6 +112,8 @@ class Scanner(object):
 
     def return_token(self, token, type):  # type can be NUM , ID , OTHER
         self.lastToken = token
+        if(token == "EOF"):
+            return token+ "$" , token
         if type == OTHER:
             # print("return token , ", token)
             return token , token
