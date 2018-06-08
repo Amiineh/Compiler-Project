@@ -40,7 +40,8 @@ class Scanner(object):
 
     def get_next_token(self):
         if self.lastToken == "EOF":
-            return
+            self.lastToken = "$"
+            return "$" , "$"
         self.startTokenIndex = self.currentIndex
         char = self.get_char()
         if char == "=":
@@ -112,8 +113,6 @@ class Scanner(object):
 
     def return_token(self, token, type):  # type can be NUM , ID , OTHER
         self.lastToken = token
-        if(token == "EOF"):
-            return token+ "$" , token
         if type == OTHER:
             # print("return token , ", token)
             return token , token

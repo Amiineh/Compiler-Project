@@ -16,8 +16,7 @@ class Parser(object):
     def run(self):
         while True:
 
-            print (self.stack)
-
+            # print (self.stack)
 
             if self.next_token is None:
                 try:
@@ -26,9 +25,11 @@ class Parser(object):
                     # todo: scanner error
                     return 1
 
-            
+
             action = self.parse_table[self.stack[-1]][self.next_token[0]]
-            print ("action: ", action)
+            if action == 'acc':
+                break
+                
             if action == '':
                 # todo: error handler
                 return 1
