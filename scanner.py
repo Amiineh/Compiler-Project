@@ -132,4 +132,6 @@ class Scanner(object):
         else:
             print("problem: token is not in category: ", token)
 
+    def get_Place(self , place):
+        return self.inputCode[:place].count('\n') + 1, place- self.inputCode[:place].rfind('\n')
 
