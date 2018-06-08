@@ -1,39 +1,22 @@
-import re
 
-tokens = {';','[',']',"ID",'NUM','int','void','(',')','{','}',"if","else","while","return","<","==","+","-","*",",","="}
-f= open("testFile.txt", "r")
-code = f.read()
-words = code.split("\\s+")
-tokenArray = []
-for word in words:
-    previusStr = tmpStr
-    tmpStr = ""
-    for letter in word:
-        if letter in tokens:
-            if tmpStr != "":
-                if tmpStr in tokens:
-                    tokenArray.append(tmpStr)
-                    previusStr = tmpStr
-                    tmpStr = ""
+from TokenList import Tokens
 
-                # TODO: elif tmpStr is digit:
-                    # TODO: free tmpStr
-                # TODO: elif tmpStr is identifier:
-                    # TODO: free tmpStr
+class scanner(object):
+    def __init__(self):
+        self.currentIndex = 0
+        self.startTokenIndex= 0
+        input_file = open(file_name)
+        self.inputCode = input_file.read()
+        self.lastToken = None
 
-            tokenArray.append(letter)
+    def get_char(self):
+        char = self.inputFile[self.currentIndex]
+        self.currentIndex +=1
+        return char
 
-        else:
-            if tmpStr in tokens:
-                tokenArray.append(tmpStr)
-                previusStr = tmpStr
-                tmpStr = ""
-                continue
-            # TODO: elif tmpStr is digit:
+    def get_next_token(self):
+        return 2
 
-            # TODO: elif tmpStr is identifier:
-
-            else:
-                tmpStr = tmpStr + letter
-
+    def return_token(self):
+        return 4
 
