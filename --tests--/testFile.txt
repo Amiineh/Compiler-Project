@@ -1,3 +1,8 @@
+void main(void){
+int i;
+int a;
 while (i < 5){
-    i = a + 123;}
+    i = a + 123;
+    }
+}
 EOF

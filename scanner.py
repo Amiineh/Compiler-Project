@@ -1,4 +1,3 @@
-from TokenList import Tokens
 from TokenList import otherTokens
 from TokenList import operators
 from TokenList import keyWords
@@ -18,11 +17,9 @@ NUM = "NUM"
 #         self.sub_DFA_name = None
 
 
-file_name = "testFile.txt"
 
-
-class scanner(object):
-    def __init__(self):
+class Scanner(object):
+    def __init__(self, file_name):
         self.symbolTable = SymbolTable()  # TODO: symbolTable should be input of scanner
         self.currentIndex = 0
         self.startTokenIndex = 0
@@ -46,25 +43,25 @@ class scanner(object):
         self.startTokenIndex = self.currentIndex
         char = self.get_char()
         if char == "=":
-            self.handle_equal()
+            return self.handle_equal()
 
         if char == "+" or char == "-":
             if self.lastToken in operators or self.lastToken in otherTokens:
-                self.handle_num()
+                return self.handle_num()
             else:
-                self.return_token(char, OTHER)
+                return self.return_token(char, OTHER)
 
         elif char.isdigit():
-            self.handle_num()
+            return self.handle_num()
 
         elif char in otherTokens or char in operators:
-            self.return_token(char , OTHER)
+            return self.return_token(char , OTHER)
 
         elif char.isalpha():
-            self.handle_id()
+            return self.handle_id()
 
         elif char == "/":
-            self.handle_comment()
+            return self.handle_comment()
 
         elif char in whitespace:
             return self.get_next_token()
@@ -88,7 +85,7 @@ class scanner(object):
         while self.inputCode[self.currentIndex - 1].isdigit() or self.inputCode[self.currentIndex - 1] == "+" or self.inputCode[self.currentIndex - 1] == "-":
             newChar = self.get_char()
             if newChar == -1:
-                print("end of file")
+                # print("end of file")
                 return self.return_token(currentNum, NUM)
             if newChar.isdigit():
                 currentNum += newChar
@@ -101,7 +98,7 @@ class scanner(object):
         while self.inputCode[self.currentIndex - 1].isdigit() or self.inputCode[self.currentIndex - 1].isalpha():
             newChar = self.get_char()
             if newChar == -1:
-                print("end of file")
+                # print("end of file")
                 return self.return_token(currentID, ID)
             if newChar.isdigit() or newChar.isalpha():
                 currentID += newChar
@@ -115,18 +112,18 @@ class scanner(object):
     def return_token(self, token, type):  # type can be NUM , ID , OTHER
         self.lastToken = token
         if type == OTHER:
-            print("return token , ", token)
+            # print("return token , ", token)
             return token
         elif type == NUM:
-            print("return number, ", token)
+            # print("return number, ", token)
             return token
         elif type == ID:
             if token in keyWords:
-                print("return keyWord , ", token)
+                # print("return keyWord , ", token)
                 # maybe error handling for this part
                 return token
             else:
-                print("return identifier, ", token)
+                # print("return identifier, ", token)
                 # maybe error handling for this part
                 return token, self.symbolTable.find(token)
         else:
