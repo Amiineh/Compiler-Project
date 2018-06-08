@@ -115,3 +115,34 @@ RHS = [
 ['arg_list','expression'],
 ['expression']
 ]
+
+follow = {
+'declaration': ['EOF', 'void', 'int'],
+'params': [')'],
+'compound_stmt': ['ID', 'EOF', 'if', '(', 'int', 'NUM', 'return', 'else', 'void', 'while', '{', ';', '}'],
+'declaration_list': ['EOF', 'void', 'int'],
+'expression_stmt': ['return', 'else', 'ID', 'if', 'while', '(', '{', ';', '}', 'NUM'], # rsdfw({;}n
+'fun_declaration': ['EOF', 'void', 'int'], # evi
+'statement': ['return', 'else', 'ID', 'if', 'while', '(', '{', ';', '}', 'NUM'], # rsdfw({;}n
+'selection_stmt': ['return', 'else', 'ID', 'if', 'while', '(', '{', ';', '}', 'NUM'], # rsdfw({;}n
+'iteration_stmt': ['return', 'else', 'ID', 'if', 'while', '(', '{', ';', '}', 'NUM'], # rsdfw({;}n
+'var': ['==', ')', '*', ';', '+', '<', ',', '=', '-', ']'], # q)*;+<,=-]
+'simple_expression': [')', ';', ',', ']'], # );,]
+'local_declarations': ['return', 'ID', 'if', 'void', 'while', '(', 'int', '{', ';', '}', 'NUM'], # rdfvw(i{;}n
+'term': ['==', ')', '*', ';', '+', '<', ',', '-', ']'], # q)*;+<,-]
+'addop': ['ID', '(', 'NUM'], # d(n
+'relop': ['ID', '(', 'NUM'], # d(n
+'program': ['$'], # $
+'additive_expression': ['==', ')', ';', '+', '<', ',', '-', ']'], # q);+<,-]
+'return_expression': ['return', 'else', 'ID', 'if', 'while', '(', '{', ';', '}', 'NUM'], # rsdfw({;}n
+'statement_list': ['return', 'else', 'ID', 'if', 'while', '(', '{', ';', '}', 'NUM'], #rdfw({;}n
+'type_specifier': ['ID'], # d
+'factor': ['==', ')', '*', ';', '+', '<', ',', '-', ']'], # q)*;+<,-]
+'var_declaration': ['return', 'ID', 'EOF', 'void', 'if', 'while', '(', 'int', '{', ';', '}', 'NUM'], # rdevfw(i{;}n
+'param': [')', ','], # ),
+'expression': [')', ';', ',', ']'], # );,]
+'param_list': [')', ','], # ),
+'call': ['==', ')', '*', ';', '+', '<', ',', '-', ']'], # q)*;+<,-]
+'args': ['('], # )
+'arg_list': ['(', ','] # ),
+}

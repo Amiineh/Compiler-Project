@@ -1,12 +1,15 @@
 import csv
 from scanner import Scanner
 import grammar
+from error_handler import ErrorHandler
 from TokenList import Non_Terminals
 
 
 class Parser(object):
     def __init__(self, file_name):
         self.scanner = Scanner(file_name)
+        self.error_handler = ErrorHandler(self.scanner)
+
         self.stack = [0]
         with open('parse_table.csv', 'r') as f:
             self.parse_table = [{k: v for k, v in row.items()}
@@ -19,19 +22,15 @@ class Parser(object):
             # print (self.stack)
 
             if self.next_token is None:
-                try:
-                    self.next_token = self.scanner.get_next_token()
-                except:
-                    # todo: scanner error
-                    return 1
-
+                self.next_token = self.scanner.get_next_token()
 
             action = self.parse_table[self.stack[-1]][self.next_token[0]]
             if action == 'acc':
                 break
-                
+
             if action == '':
-                # todo: error handler
+                self.error_handler.report_error(self.next_token[0], "the rest of statement", self.scanner.currentIndex)
+                self.error_handler_panic_mode()
                 return 1
 
             elif action[0] is 's':
@@ -47,6 +46,27 @@ class Parser(object):
                 self.stack.append(grammar.LHS[int(action[1:])])
                 self.stack.append(int(self.parse_table[self.stack[-2]][self.stack[-1]]))
 
+    def is_empty_goto_table(self, state):
+        for item in Non_Terminals:
+            if self.parse_table[state][item] is not None:
+                return False
+        return True
+
+    def error_handler_panic_mode(self):
+        while self.is_empty_goto_table(self.stack[-1]):
+            self.stack.pop()
+            self.stack.pop()
+
+        while True:
+            self.next_token = self.scanner.get_next_token()
+
+            for non_terminal in Non_Terminals:
+                if self.parse_table[self.stack[-1]][non_terminal] is not None and \
+                                self.next_token[0] in grammar.follow[non_terminal]:
+                    action = self.parse_table[self.stack[-1]][non_terminal]
+                    self.stack.append(non_terminal)
+                    self.stack.append(action)
+                    return
 
 if __name__ == "__main__":
     parser = Parser('./--tests--/testFile.txt')
