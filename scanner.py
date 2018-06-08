@@ -1,3 +1,4 @@
+import re
 from TokenList import otherTokens
 from TokenList import operators
 from TokenList import keyWords
@@ -113,19 +114,20 @@ class Scanner(object):
         self.lastToken = token
         if type == OTHER:
             # print("return token , ", token)
-            return token
+            return token , token
         elif type == NUM:
             # print("return number, ", token)
-            return token
+            return NUM , int(re.sub(r'[^\d-]+', '',token))
+
         elif type == ID:
             if token in keyWords:
                 # print("return keyWord , ", token)
                 # maybe error handling for this part
-                return token
+                return token , token
             else:
                 # print("return identifier, ", token)
                 # maybe error handling for this part
-                return token, self.symbolTable.find(token)
+                return ID, self.symbolTable.find(token)
         else:
             print("problem: token is not in category: ", token)
 
