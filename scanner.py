@@ -4,10 +4,10 @@
 # todo: if tokens have finished (after $)   ->  return error
 
 import re
-from TokenList import otherTokens
-from TokenList import operators
-from TokenList import keyWords
-from TokenList import whitespace
+from constants import otherTokens
+from constants import operators
+from constants import keyWords
+from constants import whitespace
 
 # TODO: remove this
 from symbolTable import SymbolTable

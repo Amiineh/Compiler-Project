@@ -2,7 +2,7 @@ import csv
 from scanner import Scanner
 import grammar
 from error_handler import ErrorHandler
-from TokenList import Non_Terminals
+from constants import Non_Terminals
 
 # todo: add try catch for scanner.get_next_token()
 

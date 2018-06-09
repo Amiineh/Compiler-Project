@@ -39,3 +39,21 @@ keyWords = {"EOF" , "int" , "void" , "if" , "else" , "while" , "return"}
 operators = {"+" , "-" , "=" , "*" , "<" , "=="}
 otherTokens = {";" , "[" , "]" , "(" , ")" , "{" , "}" , "," }
 whitespace = {"\n" , " " , "\t" , "\r"}
+
+class Commands(Enum):
+    ADD = 'ADD'
+    SUB = 'SUB'
+    AND = 'AND'
+    ASSIGN = 'ASSIGN'
+    EQ = 'EQ'
+    JPF = 'JPF'
+    JP = 'JP'
+    LT = 'LT'
+    MULT = 'MULT'
+    NOT = 'NOT'
+    PRINT = 'PRINT'
+
+class Value_type(Enum):
+    VOID = "VOID"
+    INT = "INT"
+    BOOL = "BOOL"
