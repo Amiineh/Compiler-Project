@@ -4,6 +4,7 @@ import grammar
 from error_handler import ErrorHandler
 from TokenList import Non_Terminals
 
+# todo: add try catch for scanner.get_next_token()
 
 class Parser(object):
     def __init__(self, file_name):
@@ -24,14 +25,13 @@ class Parser(object):
             if self.next_token is None:
                 self.next_token = self.scanner.get_next_token()
 
-            action = self.parse_table[self.stack[-1]][self.next_token[0]]
+            action = self.parse_table[int(self.stack[-1])][self.next_token[0]]
             if action == 'acc':
                 break
 
             if action == '':
-                self.error_handler.report_error(self.next_token[0], "the rest of statement", self.scanner.currentIndex)
+                self.error_handler.report_error(self.next_token[0], "the rest of statement", self.scanner.startTokenIndex)
                 self.error_handler_panic_mode()
-                return 1
 
             elif action[0] is 's':
                 # shift:
@@ -44,11 +44,11 @@ class Parser(object):
                 for _ in range(2*len(grammar.RHS[int(action[1:])])):
                     self.stack.pop()
                 self.stack.append(grammar.LHS[int(action[1:])])
-                self.stack.append(int(self.parse_table[self.stack[-2]][self.stack[-1]]))
+                self.stack.append(self.parse_table[int(self.stack[-2])][self.stack[-1]])
 
     def is_empty_goto_table(self, state):
         for item in Non_Terminals:
-            if self.parse_table[state][item] is not None:
+            if self.parse_table[int(state)][item] is not '':
                 return False
         return True
 
@@ -61,15 +61,17 @@ class Parser(object):
             self.next_token = self.scanner.get_next_token()
 
             for non_terminal in Non_Terminals:
-                if self.parse_table[self.stack[-1]][non_terminal] is not None and \
+                if self.parse_table[int(self.stack[-1])][non_terminal] is not '' and \
                                 self.next_token[0] in grammar.follow[non_terminal]:
-                    action = self.parse_table[self.stack[-1]][non_terminal]
                     self.stack.append(non_terminal)
-                    self.stack.append(action)
+                    self.stack.append(self.parse_table[int(self.stack[-2])][self.stack[-1]])
+                    # self.next_token = self.scanner.get_next_token()
                     return
 
+            # self.next_token = self.scanner.get_next_token()
+
 if __name__ == "__main__":
-    parser = Parser('./--tests--/testFile.txt')
+    parser = Parser('./--tests--/17.cpp')
     parser.run()
 
     # import sys

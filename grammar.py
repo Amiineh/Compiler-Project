@@ -65,13 +65,13 @@ RHS = [
 ['var_declaration'],
 ['fun_declaration'],
 ['type_specifier','ID', ';'],
-['type_specifier','ID', '[', 'NUM', ']'],
+['type_specifier','ID', '[', 'NUM', ']', ';'],
 ['int'],
 ['void'],
 ['type_specifier','ID','(', 'params', ')', 'compound_stmt'],
 ['param_list'],
 ['void'],
-['param_list','param'],
+['param_list',',','param'],
 ['param'],
 ['type_specifier', 'ID'],
 ['type_specifier','ID', '[', ']'],
@@ -112,7 +112,7 @@ RHS = [
 ['ID', '(', 'args', ')'],
 ['arg_list'],
 [],
-['arg_list','expression'],
+['arg_list',',','expression'],
 ['expression']
 ]
 
@@ -134,7 +134,7 @@ follow = {
 'relop': ['ID', '(', 'NUM'], # d(n
 'program': ['$'], # $
 'additive_expression': ['==', ')', ';', '+', '<', ',', '-', ']'], # q);+<,-]
-'return_expression': ['return', 'else', 'ID', 'if', 'while', '(', '{', ';', '}', 'NUM'], # rsdfw({;}n
+'return_stmt': ['return', 'else', 'ID', 'if', 'while', '(', '{', ';', '}', 'NUM'], # rsdfw({;}n
 'statement_list': ['return', 'else', 'ID', 'if', 'while', '(', '{', ';', '}', 'NUM'], #rdfw({;}n
 'type_specifier': ['ID'], # d
 'factor': ['==', ')', '*', ';', '+', '<', ',', '-', ']'], # q)*;+<,-]

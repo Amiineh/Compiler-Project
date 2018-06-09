@@ -1,3 +1,8 @@
+# todo: comment
+# todo: a[5] + 2
+# todo: a = -x[4]   ->  handle error
+# todo: if tokens have finished (after $)   ->  return error
+
 import re
 from TokenList import otherTokens
 from TokenList import operators
@@ -77,10 +82,10 @@ class Scanner(object):
             return
         if nextChar == "=":
             currentToken = "=="
-            self.return_token("==", OTHER)
+            return self.return_token("==", OTHER)
         else:
             self.get_back()
-            self.return_token("=", OTHER)
+            return self.return_token("=", OTHER)
 
     def handle_num(self):
         currentNum = self.inputCode[self.currentIndex - 1]
@@ -132,6 +137,6 @@ class Scanner(object):
         else:
             print("problem: token is not in category: ", token)
 
-    def get_Place(self , place):
+    def get_place(self , place):
         return self.inputCode[:place].count('\n') + 1, place- self.inputCode[:place].rfind('\n')
 

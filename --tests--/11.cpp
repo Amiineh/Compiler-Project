@@ -1,0 +1,1 @@
+int x;int sum(int a[]){}int sumt(void){    int q;    x = 10;}void main(void) {    int x[10];    int y;    output(sum(x));    output(sumt());}EOF

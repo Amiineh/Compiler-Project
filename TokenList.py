@@ -28,7 +28,7 @@ from enum import Enum
 Non_Terminals = ['declaration','params','compound_stmt','declaration_list',
                  'expression_stmt','fun_declaration','statement','selection_stmt',
                  'iteration_stmt','var','simple_expression','local_declarations','term','addop','relop',
-                 'program','additive_expression','return_expression','statement_list','type_specifier','factor',
+                 'program','additive_expression','return_stmt','statement_list','type_specifier','factor',
                  'var_declaration','param','expression','param_list','call','args','arg_list']
 
 Terminals = ['(',')','*','+','"','"','-',';','<','=', '[', ']', 'ID','EOF','if','int','NUM','==','return','else',

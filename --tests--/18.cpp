@@ -1,0 +1,1 @@
+int a;int x(int b){    int x;    /* int b;*/    output(x);}int sss(int x){    output(x);    output(a);    /*output(b);*/}int b;void main(void) {    output(sss(2));}EOF

@@ -1,0 +1,1 @@
+int output2(int x){}void main(void) {    int a;    a = output2(2);}EOF

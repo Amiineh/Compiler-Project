@@ -1,17 +1,17 @@
-int add(int a, int b)
+void add(int a, int b)
 {
     int c;
     c =a+   b;
-    return c;
+    return ;
 }
 
 int Add(int a, int b)
 {
-    return add(2 + 3, 4);
+    return 3;
 }
 
 void main(void) {
     int x;
-    x = Add(2, 3);
+    x = Add(add(2, 4), 3);
 }
 EOF

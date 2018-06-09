@@ -1,0 +1,1 @@
+int sum(int a[]){}void main(void) {    int x24[10];    int y2;    y2 = 10;    output(sum(x24, y2));}EOF

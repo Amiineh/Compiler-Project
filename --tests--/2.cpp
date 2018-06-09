@@ -1,8 +1,8 @@
-int add(int a, int b)
+void add(int a, int b)
 {
     int c;
     c =a+   b;
-    return c;
+    return ;
 }
 
 int Add(int a, int b)

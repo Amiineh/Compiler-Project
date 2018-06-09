@@ -1,0 +1,1 @@
+void main(void) {    int x[10];    /* x[10] = 1; */    /* x[-1] = 2; */    x[0] = 3;    output(0);    output(x[0]);    /* output(x); */}EOF
