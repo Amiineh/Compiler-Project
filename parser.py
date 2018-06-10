@@ -1,14 +1,13 @@
 import csv
 from scanner import Scanner
 import grammar
-from error_handler import ErrorHandler, Scanner_error
+from error_handler import ErrorHandler, Scanner_error, Semantic_error
 from constants import Non_Terminals
 from semantic_analyzer import SemanticAnalyzer
 from Utils import Stack
 from symbolTable import Symbol_table
 from memory_manager import MemoryManager
 
-# todo: add try catch for scanner.get_next_token()
 
 class Parser(object):
     def __init__(self, file_name):
@@ -28,10 +27,8 @@ class Parser(object):
         self.next_token = None
 
     def run(self):
+        error_detected = False
         while True:
-
-            # print (self.stack)
-
             if self.next_token is None:
                 try:
                     self.next_token = self.scanner.get_next_token()
@@ -41,12 +38,15 @@ class Parser(object):
 
             action = self.parse_table[int(self.stack[-1])][self.next_token[0]]
             if action == 'acc':
-                # print ("accepted!")
-                break
+                if not error_detected:
+                    self.print_to_output()
+                    return 0
+                return 2
 
             if action == '':
                 self.error_handler.report_error(self.next_token[0], "the rest of statement",
                                                 self.scanner.startTokenIndex)
+                error_detected = True
                 try:
                     self.error_handler_panic_mode()
                 except Scanner_error as err:
@@ -61,10 +61,22 @@ class Parser(object):
 
             elif action[0] is 'r':
                 # reduce
-                for _ in range(2 * len(grammar.RHS[int(action[1:])])):
+                grammar_num = int(action[1:])
+                for _ in range(2 * len(grammar.RHS[grammar_num])):
                     self.stack.pop()
                 self.stack.append(grammar.LHS[int(action[1:])])
                 self.stack.append(self.parse_table[int(self.stack[-2])][self.stack[-1]])
+
+                if not error_detected:
+                    for action in grammar.actions[grammar_num]:
+                        if action[0] == '#':
+                            eval("self.code_generator.%s(self.scanner.last_token)" % action[1:])
+                        elif action[0] == '@':
+                            try:
+                                eval("self.semantic_analyzer.%s(self.scanner.last_token)" % action[1:])
+                            except Semantic_error as err:
+                                self.error_handler.error(err.args[0], self.scanner.startTokenIndex)
+                                error_detected = True
 
     def is_empty_goto_table(self, state):
         for item in Non_Terminals:
@@ -90,6 +102,9 @@ class Parser(object):
                     self.stack.append(self.parse_table[int(self.stack[-2])][self.stack[-1]])
                     return
 
+    def print_to_output(self):
+        # todo
+        pass
 
 
 if __name__ == "__main__":
