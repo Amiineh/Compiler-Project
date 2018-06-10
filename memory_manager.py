@@ -12,3 +12,6 @@ class MemoryManager(object):
         self.pointer += count * 4
         # todo: array out of bound exception ?!
         return start
+
+
+# todo: which get_variable? (R or K)

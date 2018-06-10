@@ -8,5 +8,5 @@ class Stack(list):
         for _ in range(count):
             super(Stack, self).pop(*args, **kwargs)
 
-    def top(self):
-        return self[len(self) - 1]
+    def top(self, count = 1):
+        return self[len(self) - count]
