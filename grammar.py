@@ -179,24 +179,19 @@ actions = [
 ['while','(', '#label', 'expression', '#save', ')','statement', '#end_while'],
 ['return', ';', '@assert_void_fun_return', '@return_void_fun'],
 ['return', 'expression', ';', '@assert_non_void_fun_return', '@return_value_fun'],
-################################################################# TODO: doubt in expression_stmt
 ['var', '=', 'expression', '@assert_assign_type', '#assign'],
 ['simple_expression'],
-#################################################################
 ['ID', '@push_variable'],
 ['ID', '@push_token', '[', 'expression', '@assert_array_index_in_size', '@push_array', ']'],
 ['additive_expression','relop','additive_expression', '@assert_compare_type'],
 ['additive_expression'],
-################################################################# TODO: not sure about '#' place
-#"RelTerm Expression == Expression #assert_compare_type #is_equal | Expression < Expression #assert_compare_type #is_lower",
 ['<', '#lt'],
 ['==', '#eq'],
-#################################################################
-['additive_expression','addop','term', '@reduce_assert_type', '@execute'],
+['additive_expression','addop','term', '@reduce_assert_type', '#execute'],
 ['term'],
 ['+', '#add'],
 ['-', '#sub'],
-['term', '*', '#mult', 'factor', '@reduce_assert_type', '@execute'],
+['term', '*', '#mult', 'factor', '@reduce_assert_type', '#execute'],
 ['factor'],
 ['(','expression',')'],
 ['var'],
