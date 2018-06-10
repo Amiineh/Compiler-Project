@@ -14,7 +14,7 @@ class Stack(list):
 
 class Unit(object):
 
-    def __init__(self, value=None, type=None , memory_address = None):
+    def __init__(self, addressing_mode = None, value=None, type=None):
         self.value = value
         self.type = type
-        self.address = memory_address
+        self.addressing_mode = addressing_mode
