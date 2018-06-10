@@ -6,11 +6,11 @@ class MemoryManager(object):
         self.pointer = start
         self.type_dict = dict()
 
-    def get_temp(self, type):
+    def get_temp(self, type, count = 1):
         ret = self.pointer
         self.type_dict[ret] = type
         if (type == Value_type.VOID):
             raise Exception("Cannot assign memory to void.")
-        self.pointer += 4
+        self.pointer += 4 * count
         return ret
 

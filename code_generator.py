@@ -115,11 +115,50 @@ class Code_generator(object):
         self.program_block[self.semantic_stack[-1]] = make_command(Commands.JPF,
                                                                    self.semantic_stack[-2],
                                                                    i+1)
-
         self.semantic_stack.pop(2)
         self.semantic_stack.push(i)
         self.program_block.append('')
 
+    def execute(self):
+        tmp = self.memory_manager.get_temp(Value_type.BOOL)
+        self.program_block.append(make_command(self.semantic_stack[-2],
+                                               self.semantic_stack[-3],
+                                               self.semantic_stack[-1],
+                                               tmp))
+        self.semantic_stack.pop(3)
+        self.semantic_stack.push(tmp)
+
+    def allocate_array(self):
+        array_name = self.semantic_stack.top()
+        row = self.symbol_table.table[array_name]
+        array_begin = self.memory_manager.get_temp(row.pointed_type, count=row.size)
+        self.program_block.append(make_command(Commands.ASSIGN,
+                                               '#' + str(array_begin),
+                                               row.address,))
+        self.semantic_stack.pop()
+
+    def call_fun(self):
+        # todo: wtf!!
+        row_indx = self.semantic_stack[-1]
+        self.semantic_stack.pop(1)
+        if row_indx > 0:
+            args = self.semantic_stack[-row_indx:]
+        else:
+            args = []
+        self.semantic_stack.pop(row_indx)
+
+        for i in range(len(args)):
+            self.program_block.append(make_command(Commands.ASSIGN,
+                                                   args[i],
+                                                   self.semantic_stack[-1].parameters[i]))
+        self.program_block.append(make_command(Commands.ASSIGN,
+                                               '#' + str(len(self.program_block) + 2),
+                                               self.semantic_stack[-1].return_address))
+        self.program_block.append(make_command(Commands.JP,
+                                               self.semantic_stack[-1].line))
+        tmp = self.semantic_stack[-1].address
+        self.semantic_stack.pop(1)
+        self.semantic_stack.push(tmp)
 
 
 def make_command(command, first=None, second=None, third=None):
