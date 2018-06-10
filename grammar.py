@@ -7,8 +7,7 @@ LHS = [
 'declaration',
 'var_declaration',
 'var_declaration',
-'type_specifier',
-'type_specifier',
+'fun_declaration',
 'fun_declaration',
 'params',
 'params',
@@ -64,17 +63,16 @@ RHS = [
 ['declaration'],
 ['var_declaration'],
 ['fun_declaration'],
-['type_specifier','ID', ';'],
-['type_specifier','ID', '[', 'NUM', ']', ';'],
-['int'],
-['void'],
-['type_specifier','ID','(', 'params', ')', 'compound_stmt'],
+['int','ID', ';'],
+['int','ID', '[', 'NUM', ']', ';'],
+['int','ID','(', 'params', ')', 'compound_stmt'],
+['void','ID','(', 'params', ')', 'compound_stmt'],
 ['param_list'],
 ['void'],
 ['param_list',',','param'],
 ['param'],
-['type_specifier', 'ID'],
-['type_specifier','ID', '[', ']'],
+['int', 'ID'],
+['int','ID', '[', ']'],
 ['{', 'local_declarations','statement_list', '}'],
 ['local_declarations','var_declaration'],
 [],
@@ -128,7 +126,7 @@ follow = {
 'iteration_stmt': ['return', 'else', 'ID', 'if', 'while', '(', '{', ';', '}', 'NUM'], # rsdfw({;}n
 'var': ['==', ')', '*', ';', '+', '<', ',', '=', '-', ']'], # q)*;+<,=-]
 'simple_expression': [')', ';', ',', ']'], # );,]
-'local_declarations': ['return', 'ID', 'if', 'void', 'while', '(', 'int', '{', ';', '}', 'NUM'], # rdfvw(i{;}n
+'local_declarations': ['return', 'ID', 'if', 'while', '(', 'int', '{', ';', '}', 'NUM'], # rdfw(i{;}n
 'term': ['==', ')', '*', ';', '+', '<', ',', '-', ']'], # q)*;+<,-]
 'addop': ['ID', '(', 'NUM'], # d(n
 'relop': ['ID', '(', 'NUM'], # d(n
@@ -136,73 +134,77 @@ follow = {
 'additive_expression': ['==', ')', ';', '+', '<', ',', '-', ']'], # q);+<,-]
 'return_stmt': ['return', 'else', 'ID', 'if', 'while', '(', '{', ';', '}', 'NUM'], # rsdfw({;}n
 'statement_list': ['return', 'else', 'ID', 'if', 'while', '(', '{', ';', '}', 'NUM'], #rdfw({;}n
-'type_specifier': ['ID'], # d
 'factor': ['==', ')', '*', ';', '+', '<', ',', '-', ']'], # q)*;+<,-]
 'var_declaration': ['return', 'ID', 'EOF', 'void', 'if', 'while', '(', 'int', '{', ';', '}', 'NUM'], # rdevfw(i{;}n
 'param': [')', ','], # ),
 'expression': [')', ';', ',', ']'], # );,]
 'param_list': [')', ','], # ),
 'call': ['==', ')', '*', ';', '+', '<', ',', '-', ']'], # q)*;+<,-]
-'args': ['('], # )
-'arg_list': ['(', ','] # ),
+'args': [')'], # )
+'arg_list': [')', ','] # ),
 }
 
 actions = [
-
 ['program'],
+################################################################# TODO: error on no main
 ['declaration_list','EOF'],
+#################################################################
 ['declaration_list','declaration'],
 ['declaration'],
 ['var_declaration'],
 ['fun_declaration'],
-['type_specifier','ID', ';'],
-['type_specifier','ID', '[', 'NUM', ']', ';'],
-['int'],
-['void'],
-['type_specifier','ID','(', 'params', ')', 'compound_stmt'],
+['@hide_upper_scope', 'int', '@push_type', 'ID', '@store_var', '@unhide_upper_scope', ';'],
+['@hide_upper_scope', 'int', '@push_type', 'ID', '@push_token', '[', 'NUM', '@push_token', '@assert_array_size',']', '@store_array_pointer', '@allocate_array', 'unhide_upper_scope',';'],
+['@hide_upper_scope', 'int', '@push_type', 'ID', '@store_fun', '@start_scope', '(', 'params', ')', '@unhide_upper_scope', '#set_fun_adrs', 'compound_stmt', '@end_scope', '#jp_fun'],
+['@hide_upper_scope', 'void','@push_type', 'ID', '@store_fun', '@start_scope', '(', 'params', ')', '@unhide_upper_scope', '#set_fun_adrs', 'compound_stmt', '@end_scope', '#jp_fun'],
 ['param_list'],
 ['void'],
 ['param_list',',','param'],
 ['param'],
-['type_specifier', 'ID'],
-['type_specifier','ID', '[', ']'],
+['int', '@push_type', 'ID', '@store_var', '@store_fun_arg'],
+['int', '@push_type', 'ID', '@push_token', '[', ']', '@store_array_parameter'],
 ['{', 'local_declarations','statement_list', '}'],
 ['local_declarations','var_declaration'],
 [],
 ['statement_list','statement'],
 [],
 ['expression_stmt'],
-['compound_stmt'],
+['@start_scope', 'compound_stmt', '@end_scope'],
 ['selection_stmt'],
 ['iteration_stmt'],
 ['return_stmt'],
-['expression',';'],
+['expression', '@assert_assign_type', '#assign',';'],
 [';'],
-['if','(','expression',')','statement','else','statement'],
-['while','(','expression',')','statement'],
-['return', ';'],
-['return', 'expression', ';'],
-['var', '=', 'expression'],
+['if','(','expression', '#save', ')','statement', '#jpf_save','else','statement', '#jp'],
+['while','(', '#label', 'expression', '#save', ')','statement', '#end_while'],
+['return', ';', '@assert_void_fun_return', '@return_void_fun'],
+['return', 'expression', ';', '@assert_non_void_fun_return', '@return_value_fun'],
+################################################################# TODO: doubt in expression_stmt
+['var', '=', 'expression', '@assert_assign_type', '#assign'],
 ['simple_expression'],
-['ID'],
-['ID', '[', 'expression', ']'],
-['additive_expression','relop','additive_expression'],
+#################################################################
+['ID', '@push_variable'],
+['ID', '@push_token', '[', 'expression', '@assert_array_index_in_size', '@push_array', ']'],
+['additive_expression','relop','additive_expression', '@assert_compare_type'],
 ['additive_expression'],
-['<'],
-['=='],
-['additive_expression','addop','term'],
+################################################################# TODO: not sure about '#' place
+#"RelTerm Expression == Expression #assert_compare_type #is_equal | Expression < Expression #assert_compare_type #is_lower",
+['<', '#lt'],
+['==', '#eq'],
+#################################################################
+['additive_expression','addop','term', '@reduce_assert_type', '@execute'],
 ['term'],
-['+'],
-['-'],
-['term', '*', 'factor'],
+['+', '#add'],
+['-', '#sub'],
+['term', '*', '#mult', 'factor', '@reduce_assert_type', '@execute'],
 ['factor'],
 ['(','expression',')'],
 ['var'],
 ['call'],
-['NUM'],
-['ID', '(', 'args', ')'],
+['NUM', '@push_immediate'],
+['ID', '@assert_fun', '@push_token', '@push_zero', '(','args', ')', '@assert_arg_count', '@call_fun'],
 ['arg_list'],
 [],
-['arg_list',',','expression'],
-['expression']
+['arg_list',',','expression', '@assert_exist_arg', '@put_arg'],
+['expression', '@assert_exist_arg', '@put_arg']
 ]
