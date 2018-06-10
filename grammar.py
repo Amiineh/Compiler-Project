@@ -155,7 +155,6 @@ actions = [
 ['fun_declaration'],
 ['@hide_upper_scopes', 'int', '@push_stack', 'ID', '@define_var', '@unhide_upper_scopes', ';'],
 ['@hide_upper_scopes', 'int', '@push_stack', 'ID', '@push_stack', '[', 'NUM', '@push_stack', '@check_array_size',']', '@define_array', '#allocate_array', '@unhide_upper_scopes',';'],
-    #TODO: function
 ['@hide_upper_scopes', 'int', '@push_stack', 'ID', '@define_fun', '@open_scope', '(', 'params', ')', '@unhide_upper_scopes', '#set_fun_adrs', 'compound_stmt', '@close_scope', '#jp_fun'],
 ['@hide_upper_scopes', 'void','@push_stack', 'ID', '@define_fun', '@open_scope', '(', 'params', ')', '@unhide_upper_scopes', '#set_fun_adrs', 'compound_stmt', '@close_scope', '#jp_fun'],
 ['param_list'],
@@ -163,7 +162,7 @@ actions = [
 ['param_list',',','param'],
 ['param'],
 ['int', '@push_stack', 'ID', '@define_var', '@set_fun_arg'],
-['int', '@push_stack', 'ID', '@push_stack', '[', ']', '@store_array_parameter'], #TODO:store array parameter relatedd to func
+['int', '@push_stack', 'ID', '@push_stack', '[', ']', '@store_array_parameter'],
 ['{', 'local_declarations','statement_list', '}'],
 ['local_declarations','var_declaration'],
 [],
@@ -198,9 +197,9 @@ actions = [
 ['var'],
 ['call'],
 ['NUM', '@push_immediate'],
-['ID', '@check_is_fun', '@push_stack', '@push_arg_len', '(','args', ')', '@check_arg_count', '#call_fun'], #TODO: function
+['ID', '@check_is_fun', '@push_stack', '@push_arg_len', '(','args', ')', '@check_arg_count', '#call_fun'],
 ['arg_list'],
 [],
-['arg_list',',','expression', '@check_exist_arg', '#put_arg'],
-['expression', '@check_exist_arg', '#put_arg']
+['arg_list',',','expression', '@check_exist_arg', '#set_arg'],
+['expression', '@check_exist_arg', '#set_arg']
 ]
