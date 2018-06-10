@@ -155,5 +155,20 @@ class SemanticAnalyzer(object):
             raise Semantic_error("")
         self.semantic_stack[-2] += 1
 
+    def check_main(self, last_token):
+        main_row_index = self.symbol_table.find("main")
+        main_row = self.symbol_table.table[main_row_index]
+        if main_row.id_type != ID_type.Method:
+            self.error_handler.semantic_error(
+                "no main function found" , None)
+            raise Semantic_error("")
+        elif len(main_row.arguments) != 0:
+            self.error_handler.semantic_error(
+                "Unexpected argument for main" , None)
+            raise Semantic_error("")
+        elif main_row.type != Value_type.VOID:
+            self.error_handler.semantic_error(
+                "invalid type specified for main" , None)
+            raise Semantic_error("")
 
 

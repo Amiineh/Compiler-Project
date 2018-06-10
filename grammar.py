@@ -146,9 +146,7 @@ follow = {
 
 actions = [
 ['program'],
-################################################################# TODO: error on no main
-['declaration_list','EOF'],
-#################################################################
+['declaration_list','EOF' , '@check_main'],
 ['declaration_list','declaration'],
 ['declaration'],
 ['var_declaration'],
