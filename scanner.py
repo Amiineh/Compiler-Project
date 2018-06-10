@@ -11,7 +11,7 @@ from constants import whitespace
 from constants import openingTokens
 from constants import Terminals
 from constants import closingTokens
-from error_handler import ErrorHandler
+from error_handler import ErrorHandler, Scanner_error
 
 # TODO: remove this
 from symbolTable import SymbolTable
@@ -53,8 +53,8 @@ class Scanner(object):
             self.lastToken = "$"
             return "$" , "$"
         if self.lastToken == "$":
-            self.error_handler.scanner_error("end of file ",self.currentIndex)
-            return
+            self.error_handler.scanner_error("end of file", self.currentIndex)
+            raise Scanner_error("")
         self.startTokenIndex = self.currentIndex
         char = self.get_char()
         if char == "=":
@@ -101,7 +101,8 @@ class Scanner(object):
             newChar = self.get_char()
             if newChar == -1:
                 # print("end of file")
-                self.error_handler.scanner_error("Unexpected end of file" , self.currentIndex -1)
+                # self.error_handler.scanner_error("Unexpected end of file" , self.currentIndex -1)
+                # raise Scanner_error("Unexpected EOF.")
                 return self.return_token(currentNum, NUM)
             if newChar.isdigit():
                 currentNum += newChar
@@ -110,6 +111,7 @@ class Scanner(object):
                 return self.return_token(currentNum, NUM)
             else:
                 self.error_handler.scanner_error("invalid character in number" , self.currentIndex)
+                raise Scanner_error("")
 
     def handle_id(self):
         currentID = self.inputCode[self.currentIndex - 1]
@@ -125,25 +127,31 @@ class Scanner(object):
                 return self.return_token(currentID, ID)
             else:
                 self.error_handler.scanner_error("invalid character in identifier" , self.currentIndex)
+                raise Scanner_error("")
 
     def handle_comment(self):
         newChar = self.get_char()
         if newChar != "*":
             self.error_handler.scanner_error("invalid character" , self.currentIndex)
-            return
+            raise Scanner_error("")
+
         newChar = self.get_char()
         while newChar != "*" and newChar != -1:
             newChar = self.get_char()
         if newChar == -1:
             self.error_handler.scanner_error("Unexpected end of file" , self.currentIndex -1)
+            raise Scanner_error("")
+
         elif newChar == "*":
             newChar = self.get_char()
             if newChar == "/":
                 return self.get_next_token()
             elif newChar == -1:
                 self.error_handler.scanner_error("Unexpected end of file", self.currentIndex - 1)
+                raise Scanner_error("")
             else:
                 self.error_handler.scanner_error("invalid charactor", self.currentIndex)
+                raise Scanner_error("")
 
     def return_token(self, token, type):  # type can be NUM , ID , OTHER
         self.lastToken = token

@@ -10,5 +10,11 @@ class ErrorHandler(Exception):
     def report_error(self, error_string, ignored_string, place):
         self.error("Unexpected %s was found. Ignoring %s." % (error_string, ignored_string), place)
 
+    def simple_error(self, msg):
+        print(msg)
+
     def scanner_error(self , error_string , place):
         self.error("Scanner error: %s." %error_string , place)
+
+class Scanner_error(ErrorHandler):
+    pass

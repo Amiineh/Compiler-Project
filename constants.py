@@ -32,7 +32,7 @@ Non_Terminals = ['declaration','params','compound_stmt','declaration_list',
                  'var_declaration','param','expression','param_list','call','args','arg_list']
 
 Terminals = ['(',')','*','+','"','"','-',';','<','=', '[', ']', 'ID','EOF','if','int','NUM','==','return','else',
-             'void','while','{','}','$']
+             'void','while','{','}','$', ',']
 
 
 keyWords = {"EOF" , "int" , "void" , "if" , "else" , "while" , "return"}

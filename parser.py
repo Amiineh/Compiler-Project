@@ -1,7 +1,7 @@
 import csv
 from scanner import Scanner
 import grammar
-from error_handler import ErrorHandler
+from error_handler import ErrorHandler, Scanner_error
 from constants import Non_Terminals
 
 
@@ -24,17 +24,25 @@ class Parser(object):
             # print (self.stack)
 
             if self.next_token is None:
-                self.next_token = self.scanner.get_next_token()
-                if (self.next_token is None):
+                try:
+                    self.next_token = self.scanner.get_next_token()
+                except Scanner_error as err:
+                    self.error_handler.simple_error(err.args[0])
                     return 1
+
             action = self.parse_table[int(self.stack[-1])][self.next_token[0]]
             if action == 'acc':
+                # print ("accepted!")
                 break
 
             if action == '':
                 self.error_handler.report_error(self.next_token[0], "the rest of statement",
                                                 self.scanner.startTokenIndex)
-                self.error_handler_panic_mode()
+                try:
+                    self.error_handler_panic_mode()
+                except Scanner_error as err:
+                    self.error_handler.simple_error(err.args[0])
+                    return 1
 
             elif action[0] is 's':
                 # shift:
@@ -61,21 +69,25 @@ class Parser(object):
             self.stack.pop()
 
         while True:
-            self.next_token = self.scanner.get_next_token()
+            try:
+                self.next_token = self.scanner.get_next_token()
+            except Scanner_error as err:
+                raise err
+
             for non_terminal in Non_Terminals:
                 if self.parse_table[int(self.stack[-1])][non_terminal] is not '' and \
                         self.next_token[0] in grammar.follow[non_terminal]:
                     self.stack.append(non_terminal)
                     self.stack.append(self.parse_table[int(self.stack[-2])][self.stack[-1]])
-                    # self.next_token = self.scanner.get_next_token()
                     return
 
-            # self.next_token = self.scanner.get_next_token()
 
 
 if __name__ == "__main__":
-    parser = Parser('./--tests--/testFile.cpp')
-    parser.run()
+    for i in range(1, 19):
+        print ('\n' + str(i))
+        parser = Parser('./--tests--/' + str(i) +'.cpp')
+        parser.run()
 #
 #     import sys
 #     if len(sys.argv) != 2:

@@ -148,8 +148,8 @@ follow = {
 }
 
 actions = [
-['program', '#error_on_no_main'],
-    
+
+['program'],
 ['declaration_list','EOF'],
 ['declaration_list','declaration'],
 ['declaration'],
