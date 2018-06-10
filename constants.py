@@ -37,7 +37,9 @@ Terminals = ['(',')','*','+','"','"','-',';','<','=', '[', ']', 'ID','EOF','if',
 
 keyWords = {"EOF" , "int" , "void" , "if" , "else" , "while" , "return"}
 operators = {"+" , "-" , "=" , "*" , "<" , "=="}
-otherTokens = {";" , "[" , "]" , "(" , ")" , "{" , "}" , "," }
+openingTokens = {"[" , "(" , "{"}
+closingTokens = {"]" , ")" , "}"}
+otherTokens = {";" , "," }
 whitespace = {"\n" , " " , "\t" , "\r"}
 
 class Commands(Enum):
