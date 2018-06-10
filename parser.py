@@ -15,6 +15,7 @@ class Parser(object):
         self.scanner = Scanner(file_name)
         self.error_handler = ErrorHandler(self.scanner)
         self.semantic_stack = Stack()
+        self.last_token = None
         self.symbol_table = Symbol_table()
         self.memory_manager = MemoryManager(start= 1000)
         self.semantic_analyzer = SemanticAnalyzer(semantic_stack=self.semantic_stack ,
@@ -63,6 +64,8 @@ class Parser(object):
             elif action[0] is 's':
                 # shift:
                 self.stack.append(self.next_token[0])
+                self.last_token = self.next_token[0]
+
                 self.stack.append(int(action[1:]))
                 self.next_token = None
 
