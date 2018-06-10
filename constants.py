@@ -59,3 +59,8 @@ class Value_type(Enum):
     VOID = "VOID"
     INT = "INT"
     BOOL = "BOOL"
+    POINTER = "POINTER"
+
+class ID_type(Enum):
+    VAR = "variable"
+    FUN = "function"

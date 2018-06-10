@@ -14,7 +14,7 @@ from constants import closingTokens
 from error_handler import ErrorHandler, Scanner_error
 
 # TODO: remove this
-from symbolTable import SymbolTable
+from symbolTable import Symbol_table
 
 OTHER = "other_token"
 ID = "ID"
@@ -30,7 +30,7 @@ NUM = "NUM"
 
 class Scanner(object):
     def __init__(self, file_name):
-        self.symbolTable = SymbolTable()  # TODO: symbolTable should be input of scanner
+        self.symbolTable = Symbol_table()  # TODO: symbolTable should be input of scanner
         self.currentIndex = 0
         self.startTokenIndex = 0
         self.error_handler = ErrorHandler(self)

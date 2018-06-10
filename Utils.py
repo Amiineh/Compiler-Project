@@ -10,3 +10,11 @@ class Stack(list):
 
     def top(self, count = 1):
         return self[len(self) - count]
+
+
+class Unit(object):
+
+    def __init__(self, value=None, type=None , memory_address = None):
+        self.value = value
+        self.type = type
+        self.address = memory_address

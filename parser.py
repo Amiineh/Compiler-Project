@@ -3,7 +3,10 @@ from scanner import Scanner
 import grammar
 from error_handler import ErrorHandler, Scanner_error
 from constants import Non_Terminals
-
+from semantic_analyzer import SemanticAnalyzer
+from Utils import Stack
+from symbolTable import Symbol_table
+from memory_manager import MemoryManager
 
 # todo: add try catch for scanner.get_next_token()
 
@@ -11,7 +14,13 @@ class Parser(object):
     def __init__(self, file_name):
         self.scanner = Scanner(file_name)
         self.error_handler = ErrorHandler(self.scanner)
-
+        self.semantic_stack = Stack()
+        self.symbol_table = Symbol_table()
+        self.memory_manager = MemoryManager(start= 1000)
+        self.semantic_analyzer = SemanticAnalyzer(semantic_stsck=self.semantic_stack ,
+                                                  memory_manager= self.memory_manager ,
+                                                  symbol_table= self.symbol_table ,
+                                                  error_handler= self.error_handler)
         self.stack = [0]
         with open('parse_table.csv', 'r') as f:
             self.parse_table = [{k: v for k, v in row.items()}
