@@ -194,7 +194,7 @@ actions = [
 ['term'],
 ['+', '#add'],
 ['-', '#sub'],
-['term', '*', '#mult', 'factor', '@operation_type_check', '#execute'],
+['term', '*', 'factor', '@operation_type_check', '#mult'],
 ['factor'],
 ['(','expression',')'],
 ['var'],

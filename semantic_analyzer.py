@@ -59,7 +59,7 @@ class SemanticAnalyzer(object):
         self.semantic_stack.push(array_name)
 
     def check_type(self , token):
-        if self.semantic_stack[-1].type.upper() != self.semantic_stack[-2].type.upper():
+        if str(self.semantic_stack[-1].type).upper() != str(self.semantic_stack[-2].type).upper():
             self.error_handler.semantic_error("invalid assign type" ,None)
             raise Semantic_error("")
 
@@ -72,8 +72,9 @@ class SemanticAnalyzer(object):
             self.error_handler.semantic_error("not a variable", None )
             raise Semantic_error("")
         self.semantic_stack.push(Unit(
+            addressing_mode='',
             type = row.type,
-            value = row.value
+            value = token[1]
         ))
 
     def check_array_bound(self , token):
@@ -88,7 +89,7 @@ class SemanticAnalyzer(object):
             raise Semantic_error("")
 
     def push_immediate(self, token):
-        imidiate = Unit(value  =token , addressing_mode="#" , type = Value_type.INT)
+        imidiate = Unit(value  =token[1] , addressing_mode="#" , type = Value_type.INT)
         self.semantic_stack.push(imidiate)
 
     def define_fun(self , token):
@@ -97,12 +98,12 @@ class SemanticAnalyzer(object):
             self.error_handler.semantic_error("function %s has already been defined" %(str(row.value)), None)
             raise Semantic_error("")
         row.id_type = ID_type.FUN
-        row.type = self.semantic_stack[-1]
+        row.type = str(self.semantic_stack[-1]).upper()
         self.semantic_stack.pop()
         self.semantic_stack.push(token[1])
         if row.arguments is None:
             row.arguments = []
-        if row.type != Value_type.VOID:
+        if str(row.type).upper() != 'VOID':
             row.return_address = self.memory_manager.get_temp(row.type)
         else:
             row.return_address = None
@@ -118,15 +119,15 @@ class SemanticAnalyzer(object):
     def check_void_fun_return(self, token):
         row_index = self.semantic_stack[-2]
         row = self.symbol_table.table[row_index]
-        if row.type != Value_type.VOID:
+        if str(row.type).upper() != 'VOID':
             self.error_handler.semantic_error("Unexpected return value", None)
             raise Semantic_error("")
 
     def check_int_fun_return(self, token):
-        row_index = self.semantic_stack[-3]
+        row_index = self.semantic_stack[-2]
         row = self.symbol_table.table[row_index]
-        if row.type == Value_type.VOID:
-            self.error_handler.semantic_error("Unexpected return value" , None)
+        if str(row.type).upper() == 'VOID':
+            self.error_handler.semantic_error("Expected return value" , None)
             raise Semantic_error("")
         elif row.type != self.semantic_stack[-1].type:
             self.error_handler.semantic_error("Expected %s, got %s" %(row.type , self.semantic_stack[-1].type), None)
@@ -149,7 +150,7 @@ class SemanticAnalyzer(object):
         self.semantic_stack.push(0)
 
     def check_exist_arg(self, token):
-        method_row = self.symbol_table.table[self.semantic_stack[-3]]
+        method_row = self.symbol_table.table[self.semantic_stack[-2]]
         arg_index = self.semantic_stack[-2]
         if arg_index >= len(method_row.arguments):
             self.error_handler.semantic_error("too many arguments for function", None)
@@ -171,7 +172,7 @@ class SemanticAnalyzer(object):
             self.error_handler.semantic_error(
                 "Unexpected argument for main" , None)
             raise Semantic_error("")
-        elif main_row.type != Value_type.VOID:
+        elif main_row.type != 'VOID':
             self.error_handler.semantic_error(
                 "invalid type specified for main" , None)
             raise Semantic_error("")

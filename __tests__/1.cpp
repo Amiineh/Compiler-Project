@@ -12,6 +12,8 @@ int Add(int a, int b)
 */
 void main(void) {
     int x;
+    x = 3-2*4;
+    output(x);
     /*x = Add(2, 3);*/
 }
 EOF
