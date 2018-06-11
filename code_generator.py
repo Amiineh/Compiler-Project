@@ -222,13 +222,13 @@ class Code_generator(object):
         self.semantic_stack.pop()
 
 def make_command(command, first=None, second=None, third=None):
-    row = "( " + command.value + ", " + str(first)
+    row = "( " + command.value + ", " + str(first.value)
     if second is not None:
-        row += ', ' + str(second)
+        row += ', ' + str(second.value)
     else:
         return row + ', , )'
     if third is not None:
-        row += ', ' + str(third)
+        row += ', ' + str(third.value)
     else:
         return row + ', )'
     return row + " )"

@@ -16,7 +16,7 @@ class Parser(object):
         self.semantic_stack = Stack()
         self.symbol_table = Symbol_table()
         self.memory_manager = MemoryManager(start= 1000)
-        self.semantic_analyzer = SemanticAnalyzer(semantic_stsck=self.semantic_stack ,
+        self.semantic_analyzer = SemanticAnalyzer(semantic_stack=self.semantic_stack ,
                                                   memory_manager= self.memory_manager ,
                                                   symbol_table= self.symbol_table ,
                                                   error_handler= self.error_handler)
@@ -108,9 +108,9 @@ class Parser(object):
 
 
 if __name__ == "__main__":
-    for i in range(1, 19):
-        print ('\n' + str(i))
-        parser = Parser('./--tests--/' + str(i) +'.cpp')
+    # for i in range(1, 19):
+    #     print ('\n' + str(i))
+        parser = Parser('./__tests__/' + str(1) +'.cpp')
         parser.run()
 #
 #     import sys
