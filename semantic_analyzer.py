@@ -171,4 +171,7 @@ class SemanticAnalyzer(object):
                 "invalid type specified for main" , None)
             raise Semantic_error("")
 
-
+    def check_int_argument(self , token):
+        if self.semantic_stack[-1].type != Value_type.INT:
+            self.error_handler.semantic_error(
+                "Expected int as argument of output function in c_minuus", None)
