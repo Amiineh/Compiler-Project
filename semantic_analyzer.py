@@ -25,7 +25,7 @@ class SemanticAnalyzer(object):
         self.semantic_stack.push(input)
 
     def define_var(self , token):
-        var = self.symbol_table.table[token]
+        var = self.symbol_table.table[int(token)]
         if var.type is not None:
             self.error_handler.semantic_error("%s is already defined in this scope." %(var.value), None )
             raise Semantic_error("")
@@ -62,7 +62,7 @@ class SemanticAnalyzer(object):
             raise Semantic_error("")
 
     def push_variable(self , token):
-        row = self.symbol_table.table[token]
+        row = self.symbol_table.table[int(token)]
         if row.type is None:
             self.error_handler.semantic_error("%s is not defined in this scope." % (row.value), None)
             raise Semantic_error("")
@@ -90,7 +90,7 @@ class SemanticAnalyzer(object):
         self.semantic_stack.push(imidiate)
 
     def define_fun(self , token):
-        row = self.symbol_table.table[token]
+        row = self.symbol_table.table[int(token)]
         if row.type is not None:
             self.error_handler.semantic_error("function %s has already been defined" %(str(row.value)), None)
             raise Semantic_error("")
@@ -107,7 +107,7 @@ class SemanticAnalyzer(object):
 
     def set_fun_arg(self, token):
         method_row = self.symbol_table.table[self.semantic_stack[-1]]
-        row = self.symbol_table.table[token]
+        row = self.symbol_table.table[int(token)]
         method_row.arguments.append((row.value, row.type, row.address))
 
     def check_void_fun_return(self, token):
@@ -128,7 +128,7 @@ class SemanticAnalyzer(object):
             raise Semantic_error("")
 
     def check_is_fun(self , token):
-        fun = self.symbol_table.table[token]
+        fun = self.symbol_table.table[int(token)]
         if fun.id_type != ID_type.FUN:
             self.error_handler.semantic_error("%s is not a function" %(str(fun.value)), None)
             raise Semantic_error("")

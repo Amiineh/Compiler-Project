@@ -30,6 +30,7 @@ class Parser(object):
             self.parse_table = [{k: v for k, v in row.items()}
                                 for row in csv.DictReader(f, skipinitialspace=True)]
         self.next_token = None
+        self.token_history = []
 
     def run(self):
         error_detected = False
@@ -37,6 +38,7 @@ class Parser(object):
             if self.next_token is None:
                 try:
                     self.next_token = self.scanner.get_next_token()
+                    self.token_history.append(self.next_token)
                 except Scanner_error as err:
                     self.error_handler.simple_error(err.args[0])
                     return 1
@@ -75,10 +77,10 @@ class Parser(object):
                 if not error_detected:
                     for action in grammar.actions[grammar_num]:
                         if action[0] == '#':
-                            eval("self.code_generator.%s(self.scanner.last_token)" % action[1:])
+                            eval("self.code_generator.%s(self.scanner.lastToken)" % action[1:])
                         elif action[0] == '@':
                             try:
-                                eval("self.semantic_analyzer.%s(self.scanner.last_token)" % action[1:])
+                                eval("self.semantic_analyzer.%s(self.scanner.lastToken)" % action[1:])
                             except Semantic_error as err:
                                 self.error_handler.error(err.args[0], self.scanner.startTokenIndex)
                                 error_detected = True
@@ -97,6 +99,7 @@ class Parser(object):
         while True:
             try:
                 self.next_token = self.scanner.get_next_token()
+                self.token_history.append(self.next_token)
             except Scanner_error as err:
                 raise err
 
