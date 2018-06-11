@@ -136,7 +136,7 @@ class Parser(object):
 if __name__ == "__main__":
     # for i in range(1, 19):
     #     print ('\n' + str(i))
-        parser = Parser('./__tests__/' + str(1) +'.cpp')
+        parser = Parser('./__tests__/' + str(5) +'.cpp')
         parser.run()
 #
 #     import sys

@@ -34,12 +34,16 @@ class Code_generator(object):
     def jpf(self):
         self.program_block[self.semantic_stack[-1]] = make_command(Commands.JPF,
                                                                    self.semantic_stack[-2],
-                                                                   len(self.program_block))
+                                                                   Unit(addressing_mode='#',
+                                                                        value=len(self.program_block),
+                                                                        type=Value_type.POINTER))
         self.semantic_stack.pop(2)
 
     def jp(self):
         self.program_block[self.semantic_stack[-1]] = make_command(Commands.JP,
-                                                                   len(self.program_block))
+                                                                   Unit(addressing_mode='#',
+                                                                        value=len(self.program_block),
+                                                                        type= Value_type.POINTER))
         self.semantic_stack.pop(1)
 
     def lt(self):
@@ -52,13 +56,7 @@ class Code_generator(object):
         self.semantic_stack.push(tmp)
 
     def mult(self):
-        tmp = Unit(addressing_mode='', value=self.memory_manager.get_temp(Value_type.INT), type=Value_type.INT)
-        self.program_block.append(make_command(Commands.MULT,
-                                               self.semantic_stack[-2],
-                                               self.semantic_stack[-1],
-                                               tmp))
-        self.semantic_stack.pop(2)
-        self.semantic_stack.push(tmp)
+        self.semantic_stack.push(Commands.MULT)
 
     def print_op(self):
         self.program_block.append(make_command(Commands.PRINT,
@@ -74,10 +72,14 @@ class Code_generator(object):
 
     def end_while(self):
         self.program_block.append(make_command(Commands.JP,
-                                               self.semantic_stack[-3]))
+                                                   self.semantic_stack[-3]))
         self.program_block[self.semantic_stack[-1]] = make_command(Commands.JPF,
-                                                                   self.semantic_stack[-2],
-                                                                   len(self.program_block))
+                                                                   Unit(addressing_mode='#',
+                                                                        value=self.semantic_stack[-2],
+                                                                        type=Value_type.POINTER),
+                                                                   Unit(addressing_mode='#',
+                                                                        value=len(self.program_block),
+                                                                        type=Value_type.POINTER))
         self.semantic_stack.pop(3)
 
     def jpf_save(self):
@@ -147,7 +149,6 @@ class Code_generator(object):
 
     def jp_fun(self):
         row = self.symbol_table.table[self.semantic_stack[-2]]
-        # TODO: why do we need jump anyway?
         self.program_block.append(make_command(Commands.JP,
                                                Unit(addressing_mode='',
                                                     value=row.save_space,
