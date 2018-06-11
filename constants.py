@@ -29,13 +29,13 @@ Non_Terminals = ['declaration','params','compound_stmt','declaration_list',
                  'expression_stmt','fun_declaration','statement','selection_stmt',
                  'iteration_stmt','var','simple_expression','local_declarations','term','addop','relop',
                  'program','additive_expression','return_stmt','statement_list','factor',
-                 'var_declaration','param','expression','param_list','call','args','arg_list']
+                 'var_declaration','param','expression','param_list','call','args','arg_list', 'output_stmt']
 
 Terminals = ['(',')','*','+','"','"','-',';','<','=', '[', ']', 'ID','EOF','if','int','NUM','==','return','else',
-             'void','while','{','}','$', ',']
+             'void','while','{','}','$', ',', 'output']
 
 
-keyWords = {"EOF" , "int" , "void" , "if" , "else" , "while" , "return"}
+keyWords = {"EOF" , "int" , "void" , "if" , "else" , "while" , "return", 'output'}
 operators = {"+" , "-" , "=" , "*" , "<" , "=="}
 openingTokens = {"[" , "(" , "{"}
 closingTokens = {"]" , ")" , "}"}
