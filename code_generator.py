@@ -138,7 +138,7 @@ class Code_generator(object):
         self.semantic_stack.pop(2)
         self.semantic_stack.push(Unit(addressing_mode='@', value=var_adrs, type=row.pointed_type))
 
-    def set_fun_address(self):
+    def set_fun_adrs(self):
         row = self.symbol_table.table[self.semantic_stack[-1]]
         self.semantic_stack.push(len(self.program_block))
         if row.value != "main" :

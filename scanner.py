@@ -29,8 +29,8 @@ NUM = "NUM"
 
 
 class Scanner(object):
-    def __init__(self, file_name):
-        self.symbolTable = Symbol_table()  # TODO: symbolTable should be input of scanner
+    def __init__(self, file_name, symbol_table):
+        self.symbolTable = symbol_table
         self.currentIndex = 0
         self.startTokenIndex = 0
         self.error_handler = ErrorHandler(self)

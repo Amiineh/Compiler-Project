@@ -22,36 +22,38 @@ class SemanticAnalyzer(object):
         self.symbol_table.hide_upper_scopes = False
 
     def push_stack(self , input):
-        self.semantic_stack.push(input)
+        self.semantic_stack.push(input[1])
 
     def define_var(self , token):
-        var = self.symbol_table.table[int(token)]
+        var = self.symbol_table.table[int(token[1])]
         if var.type is not None:
-            self.error_handler.semantic_error("%s is already defined in this scope." %(var.value), None )
+            self.error_handler.semantic_error("%s is already defined in this scope" %(var.value), None )
             raise Semantic_error("")
         var.id_type = ID_type.VAR
-        if self.semantic_stack.top().upper() is not Value_type.INT:
-            self.error_handler.semantic_error("invalid type specifier for %s." %(var.value), None )
+        tmp_type = self.semantic_stack.top()
+        if tmp_type != 'int':
+            self.error_handler.semantic_error("invalid type specifier for %s" %(var.value), None )
             raise Semantic_error("")
-        var.type = self.semantic_stack.top().upper()
+        var.type = Value_type.INT
         self.semantic_stack.pop()
+        self.semantic_stack.push(token[1])
         var.address = self.memory_manager.get_temp(Value_type.INT)
 
     def check_array_size(self, token):
         if self.semantic_stack.top() <= 0:
-            self.error_handler.semantic_error("invalid array size %s (cannot be negative)." % (self.semantic_stack.top()), None)
+            self.error_handler.semantic_error("invalid array size %s (cannot be negative)" % (self.semantic_stack.top()), None)
             raise Semantic_error("")
 
     def define_array(self, token):
         array_name = self.semantic_stack[-2]
         row = self.symbol_table.table[array_name]
         if row.type is not None:
-            self.error_handler.semantic_error("%s is already defined in this scope." %(var.value), None )
+            self.error_handler.semantic_error("%s is already defined in this scope" %(row.value), None )
             raise Semantic_error("")
         row.id_type = ID_type.VAR
         row.type = Value_type.POINTER
         row.pointed_type = Value_type.INT
-        row.address = self.memory_manager.get_variable(row.type)
+        row.address = self.memory_manager.get_temp(row.type)
         row.size = self.semantic_stack.top()
         self.semantic_stack.pop(3)
         self.semantic_stack.push(array_name)
@@ -62,9 +64,9 @@ class SemanticAnalyzer(object):
             raise Semantic_error("")
 
     def push_variable(self , token):
-        row = self.symbol_table.table[int(token)]
+        row = self.symbol_table.table[int(token[1])]
         if row.type is None:
-            self.error_handler.semantic_error("%s is not defined in this scope." % (row.value), None)
+            self.error_handler.semantic_error("%s is not defined in this scope" % (row.value), None)
             raise Semantic_error("")
         if row.id_type != ID_type.VAR:
             self.error_handler.semantic_error("not a variable", None )
@@ -81,7 +83,7 @@ class SemanticAnalyzer(object):
 
     def operation_type_check(self , token):
         # example a + b
-        if self.semantic_stack[-1].type.upper() != self.semantic_stack[-3].type.upper():
+        if str(self.semantic_stack[-1].type).upper() != str(self.semantic_stack[-3].type).upper():
             self.error_handler.semantic_error("invalid assign type" ,None)
             raise Semantic_error("")
 
@@ -90,24 +92,27 @@ class SemanticAnalyzer(object):
         self.semantic_stack.push(imidiate)
 
     def define_fun(self , token):
-        row = self.symbol_table.table[int(token)]
+        row = self.symbol_table.table[int(token[1])]
         if row.type is not None:
             self.error_handler.semantic_error("function %s has already been defined" %(str(row.value)), None)
             raise Semantic_error("")
         row.id_type = ID_type.FUN
         row.type = self.semantic_stack[-1]
         self.semantic_stack.pop()
-        self.semantic_stack.push(token)
-        row.arguments = []
+        self.semantic_stack.push(token[1])
+        if row.arguments is None:
+            row.arguments = []
         if row.type != Value_type.VOID:
-            row.return_address = self.memory_manager.get_variable(row.type)
+            row.return_address = self.memory_manager.get_temp(row.type)
         else:
             row.return_address = None
-        row.save_space = self.memory_manager.get_variable(Value_type.POINTER)
+        row.save_space = self.memory_manager.get_temp(Value_type.POINTER)
 
     def set_fun_arg(self, token):
         method_row = self.symbol_table.table[self.semantic_stack[-1]]
-        row = self.symbol_table.table[int(token)]
+        row = self.symbol_table.table[token[1]]
+        if method_row.arguments is None:
+            method_row.arguments = []
         method_row.arguments.append((row.value, row.type, row.address))
 
     def check_void_fun_return(self, token):
@@ -128,7 +133,7 @@ class SemanticAnalyzer(object):
             raise Semantic_error("")
 
     def check_is_fun(self , token):
-        fun = self.symbol_table.table[int(token)]
+        fun = self.symbol_table.table[int(token[1])]
         if fun.id_type != ID_type.FUN:
             self.error_handler.semantic_error("%s is not a function" %(str(fun.value)), None)
             raise Semantic_error("")
@@ -158,7 +163,7 @@ class SemanticAnalyzer(object):
     def check_main(self, last_token):
         main_row_index = self.symbol_table.find("main")
         main_row = self.symbol_table.table[main_row_index]
-        if main_row.id_type != ID_type.Method:
+        if main_row.id_type != ID_type.FUN:
             self.error_handler.semantic_error(
                 "no main function found" , None)
             raise Semantic_error("")

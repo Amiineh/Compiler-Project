@@ -12,11 +12,11 @@ from code_generator import Code_generator
 
 class Parser(object):
     def __init__(self, file_name):
-        self.scanner = Scanner(file_name)
+        self.symbol_table = Symbol_table()
+        self.scanner = Scanner(file_name, self.symbol_table)
         self.error_handler = ErrorHandler(self.scanner)
         self.semantic_stack = Stack()
         self.last_token = None
-        self.symbol_table = Symbol_table()
         self.memory_manager = MemoryManager(start= 1000)
         self.semantic_analyzer = SemanticAnalyzer(semantic_stack=self.semantic_stack ,
                                                   memory_manager= self.memory_manager ,
@@ -72,21 +72,35 @@ class Parser(object):
             elif action[0] is 'r':
                 # reduce
                 grammar_num = int(action[1:])
-                for _ in range(2 * len(grammar.RHS[grammar_num])):
-                    self.stack.pop()
-                self.stack.append(grammar.LHS[int(action[1:])])
-                self.stack.append(self.parse_table[int(self.stack[-2])][self.stack[-1]])
 
                 if not error_detected:
+                    history_idx = len(self.token_history) - len(grammar.RHS[grammar_num]) -2
                     for action in grammar.actions[grammar_num]:
                         if action[0] == '#':
-                            eval("self.code_generator.%s(self.scanner.lastToken)" % action[1:])
+                            eval("self.code_generator.%s()" % action[1:])
                         elif action[0] == '@':
                             try:
-                                eval("self.semantic_analyzer.%s(self.scanner.lastToken)" % action[1:])
+                                eval("self.semantic_analyzer.%s(self.token_history[history_idx])" % action[1:])
                             except Semantic_error as err:
                                 self.error_handler.error(err.args[0], self.scanner.startTokenIndex)
                                 error_detected = True
+                        else:
+                            history_idx += 1
+
+
+                for _ in range(2 * len(grammar.RHS[grammar_num])):
+                    self.stack.pop()
+                tmp = self.token_history[-1]
+                for _ in range(len(grammar.RHS[grammar_num])+1):
+                    self.token_history.pop()
+                    history_idx -= 1
+                self.token_history.append(grammar.LHS[grammar_num])
+                self.token_history.append(tmp)
+                history_idx += 1
+                self.stack.append(grammar.LHS[grammar_num])
+                self.stack.append(self.parse_table[int(self.stack[-2])][self.stack[-1]])
+
+
 
     def is_empty_goto_table(self, state):
         for item in Non_Terminals:
