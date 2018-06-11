@@ -7,6 +7,7 @@ from semantic_analyzer import SemanticAnalyzer
 from Utils import Stack
 from symbolTable import Symbol_table
 from memory_manager import MemoryManager
+from code_generator import Code_generator
 
 
 class Parser(object):
@@ -20,6 +21,10 @@ class Parser(object):
                                                   memory_manager= self.memory_manager ,
                                                   symbol_table= self.symbol_table ,
                                                   error_handler= self.error_handler)
+        self.code_generator = Code_generator(symbol_table=self.symbol_table,
+                                             semantic_stack=self.semantic_stack,
+                                             memory_manager=self.memory_manager)
+
         self.stack = [0]
         with open('parse_table.csv', 'r') as f:
             self.parse_table = [{k: v for k, v in row.items()}
@@ -103,8 +108,9 @@ class Parser(object):
                     return
 
     def print_to_output(self):
-        # todo
-        pass
+        with open("output.txt", "w") as output:
+            for i in range(len(self.code_generator.program_block)):
+                output.write(str(i) + "\t" + self.code_generator.program_block[i] + "\n")
 
 
 if __name__ == "__main__":
